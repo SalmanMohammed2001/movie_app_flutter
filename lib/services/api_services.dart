@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
+import 'package:movie_app/models/movie_model.dart';
 
 
 class ApiServices{
@@ -11,16 +12,17 @@ class ApiServices{
   final popularMovies='https://api.themoviedb.org/3/movie/popular?';
 
 
-  Future<void> getPopularMovie() async{
+  Future<List<MovieModel>> getPopularMovie() async{
     final response= await http.get(Uri.parse('$popularMovies$apiKey'));
 
     if(response.statusCode == 200){
       Map<String,dynamic> body= jsonDecode(response.body);
       List<dynamic> result= body['results'];
-      Logger().f(result.length);
-
+      List<MovieModel> movies=result.map((e) => MovieModel.fromJson(e as Map<String,dynamic>)).toList();
+      return movies;
     }else{
       Logger().e("Error ${response.statusCode}");
+      return [];
     }
   }
 
