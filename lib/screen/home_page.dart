@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:movie_app/model/movie_model.dart';
 import 'package:movie_app/service/api_services.dart';
 
 class HomePage extends StatefulWidget {
@@ -18,6 +19,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.sizeOf(context);
+
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
@@ -26,7 +29,9 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             children: [
               Container(
-                decoration: BoxDecoration(color: Colors.grey.shade900,borderRadius: BorderRadius.circular(10)),
+                decoration: BoxDecoration(
+                    color: Colors.grey.shade900,
+                    borderRadius: BorderRadius.circular(10)),
                 child: Row(
                   children: [
                     IconButton(
@@ -35,7 +40,7 @@ class _HomePageState extends State<HomePage> {
                           Icons.menu,
                           color: Colors.white,
                         )),
-                    Spacer(),
+                    const Spacer(),
                     const Text(
                       "Movie Hub",
                       style: TextStyle(
@@ -43,27 +48,98 @@ class _HomePageState extends State<HomePage> {
                           fontSize: 23,
                           fontWeight: FontWeight.bold),
                     ),
-                    Spacer(),
+                    const Spacer(),
                   ],
                 ),
               ),
-              CarouselSlider(
-                options: CarouselOptions(height: 400.0,autoPlay: true),
-                items: [1,2,3,4,5].map((i) {
-                  return Builder(
-                    builder: (BuildContext context) {
-                      return Container(
-                          width: MediaQuery.of(context).size.width,
-                          margin: EdgeInsets.symmetric(horizontal: 5.0),
-                          decoration: BoxDecoration(
-                              color: Colors.amber
-                          ),
-                          child: Text('text $i', style: TextStyle(fontSize: 16.0),)
+              const SizedBox(
+                height: 10,
+              ),
+              FutureBuilder(
+                  future: ApiServices().getPopularMovies(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const CircularProgressIndicator(
+                        color: Colors.white,
                       );
-                    },
-                  );
-                }).toList(),
-              )
+                    }
+                    List<MovieModel> movies = snapshot.data!;
+                    return CarouselSlider(
+                      options: CarouselOptions(
+                          height: size.height * 0.22, autoPlay: true),
+                      items: snapshot.data!.map((movie) {
+                        return Builder(
+                          builder: (BuildContext context) {
+                            return Padding(
+                              padding: const EdgeInsets.all(3.0),
+                              child: Container(
+                                width: size.width,
+                                decoration: BoxDecoration(
+                                    color: Colors.grey.shade900,
+                                    borderRadius: BorderRadius.circular(10),
+                                    image: DecorationImage(
+                                        image: NetworkImage(movie.backdropPath),
+                                        fit: BoxFit.cover)),
+                                child: Stack(
+                                  children: [
+                                    Positioned(
+                                      left: 3,
+                                      bottom: 3,
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                                        decoration: BoxDecoration(
+                                          color: Colors.black.withOpacity(0.5),
+                                          borderRadius: BorderRadius.circular(20)
+                                        ),
+                                        child: Text(
+                                          movie.title,
+                                          style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+
+                                    ),
+                                    Positioned(
+                                      top: 3,
+                                      right: 3,
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                                        decoration: BoxDecoration(
+                                          color: Colors.deepOrange.withOpacity(0.5),
+                                          borderRadius: BorderRadius.circular(20)
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Text(
+                                              movie.voteAverage.toString().substring(0,3),
+                                              style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 13,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            const SizedBox(width: 5,),
+                                            Icon(
+                                              Icons.star,
+                                              color: Colors.yellow.shade600,
+                                              size: 12,
+                                            )
+                                          ],
+                                        ),
+                                      ),
+
+                                    ),
+
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      }).toList(),
+                    );
+                  })
             ],
           ),
         ),
