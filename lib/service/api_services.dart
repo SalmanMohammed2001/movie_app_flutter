@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
+import 'package:movie_app/model/movie_model.dart';
 
 class ApiServices {
   final apiKey = 'api_key=ce6ab78f71cbebfb39e13333eedcd31a';
@@ -14,7 +15,9 @@ class ApiServices {
 
       List<dynamic> result=body['results'];
 
-      Logger().f(result.length);
+      List<MovieModel> movies=result.map((e)=>MovieModel.fromJson(e as Map<String,dynamic>)).toList();
+
+      Logger().f(movies[0].overview);
 
     }else{
       Logger().e('Error -${response.statusCode}');
