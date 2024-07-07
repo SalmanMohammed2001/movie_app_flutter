@@ -8,19 +8,18 @@ class ApiServices {
   final apiKey = 'api_key=ce6ab78f71cbebfb39e13333eedcd31a';
   final popularMovies = 'https://api.themoviedb.org/3/movie/popular?';
 
-  Future<void> getPopularMovies() async {
+  Future<List<MovieModel>> getPopularMovies() async {
     final response = await http.get(Uri.parse('$popularMovies$apiKey'));
     if(response.statusCode == 200){
       Map<String,dynamic> body= jsonDecode(response.body);
-
       List<dynamic> result=body['results'];
-
       List<MovieModel> movies=result.map((e)=>MovieModel.fromJson(e as Map<String,dynamic>)).toList();
 
-      Logger().f(movies[0].overview);
+      return movies;
 
     }else{
       Logger().e('Error -${response.statusCode}');
+      return [];
     }
 
   }
