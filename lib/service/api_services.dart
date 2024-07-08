@@ -20,7 +20,6 @@ class ApiServices {
           .map((e) => MovieModel.fromJson(e as Map<String, dynamic>))
           .toList();
 
-      Logger().f(movies[0].posterPath);
       return movies;
     } else {
       Logger().e('Error -${response.statusCode}');
@@ -44,6 +43,21 @@ class ApiServices {
   }
   Future<List<MovieModel>> getTopRateMovies() async {
     final response = await http.get(Uri.parse('$topRateMovies$apiKey'));
+    if (response.statusCode == 200) {
+      Map<String, dynamic> body = jsonDecode(response.body);
+      List<dynamic> results = body['results'];
+      List<MovieModel> movies = results
+          .map((e) => MovieModel.fromJson(e as Map<String, dynamic>))
+          .toList();
+      return movies;
+    } else {
+      Logger().e('Error -${response.statusCode}');
+      return [];
+    }
+  }
+
+  Future<List<MovieModel>> getUpComingMovies() async {
+    final response = await http.get(Uri.parse('$upComingMovies$apiKey'));
     if (response.statusCode == 200) {
       Map<String, dynamic> body = jsonDecode(response.body);
       List<dynamic> results = body['results'];

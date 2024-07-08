@@ -6,12 +6,14 @@ class MovieModel {
   String backdropPath;
   String posterPath;
   double voteAverage;
+  int id;
 
   MovieModel({required this.title,
     required this.overview,
     required this.backdropPath,
     required this.posterPath,
-    required this.voteAverage
+    required this.voteAverage,
+    required this.id
   });
 
   factory MovieModel.fromJson(Map<String, dynamic> json){
@@ -20,7 +22,8 @@ class MovieModel {
         overview: json['overview'],
         backdropPath: "https://image.tmdb.org/t/p/w500${json['backdrop_path']}",
         posterPath: "https://image.tmdb.org/t/p/w500${json['poster_path']}",
-        voteAverage:json['vote_average']
+        voteAverage:json['vote_average'],
+        id:json['id']
     );
   }
 }

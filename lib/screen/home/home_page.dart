@@ -30,23 +30,27 @@ class _HomePageState extends State<HomePage> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const CustomToolBar(),
-              const SizedBox(
-                height: 10,
-              ),
-              PopularSlider(size: size),
-              const SizedBox (
-                height: 10,
-              ),
-              MoviesListView(size: size,title: "Now Playing",future: ApiServices().getNowPlayingMovies(),),
-              MoviesListView(size: size,title: "Top Rated Movies",future: ApiServices().getTopRateMovies(),),
+          child: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const CustomToolBar(),
+                const SizedBox(
+                  height: 10,
+                ),
+                PopularSlider(size: size),
+                const SizedBox (
+                  height: 10,
+                ),
+                MoviesListView(size: size,title: "Now Playing",future: ApiServices().getNowPlayingMovies(),),
+                MoviesListView(size: size,title: "Top Rated Movies",future: ApiServices().getTopRateMovies(),),
+                MoviesListView(size: size,title: "UpComing Movies",future: ApiServices().getUpComingMovies(),),
 
 
 
-            ],
+              ],
+            ),
           ),
         ),
       ),
