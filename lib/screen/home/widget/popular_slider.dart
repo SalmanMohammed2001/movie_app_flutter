@@ -36,6 +36,7 @@ class PopularSlider extends StatelessWidget {
                     padding: const EdgeInsets.all(3.0),
                     child: GestureDetector(
                       onTap: () {
+                        Logger().f(movie.id);
                     Navigator.push(context, MaterialPageRoute(builder: (context) => MovieView(movie: movie,)));
                       },
                       child: Container(

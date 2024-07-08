@@ -10,6 +10,7 @@ class ApiServices {
   final nowPlaying = "https://api.themoviedb.org/3/movie/now_playing?";
   final topRateMovies = "https://api.themoviedb.org/3/movie/top_rated?";
   final upComingMovies = "https://api.themoviedb.org/3/movie/upcoming?";
+  final movieData = "https://api.themoviedb.org/3/movie/";
 
   Future<List<MovieModel>> getPopularMovies() async {
     final response = await http.get(Uri.parse('$popularMovies$apiKey'));
@@ -57,6 +58,22 @@ class ApiServices {
   }
 
   Future<List<MovieModel>> getUpComingMovies() async {
+    final response = await http.get(Uri.parse('$upComingMovies$apiKey'));
+    if (response.statusCode == 200) {
+      Map<String, dynamic> body = jsonDecode(response.body);
+      List<dynamic> results = body['results'];
+      List<MovieModel> movies = results
+          .map((e) => MovieModel.fromJson(e as Map<String, dynamic>))
+          .toList();
+      return movies;
+    } else {
+      Logger().e('Error -${response.statusCode}');
+      return [];
+    }
+  }
+
+
+  Future<List<MovieModel>> getMovieDats() async {
     final response = await http.get(Uri.parse('$upComingMovies$apiKey'));
     if (response.statusCode == 200) {
       Map<String, dynamic> body = jsonDecode(response.body);
