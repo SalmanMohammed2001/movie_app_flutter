@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:movie_app/model/actor_model.dart';
 import 'package:movie_app/model/movie_model.dart';
 import 'package:movie_app/service/api_services.dart';
 
@@ -20,7 +21,6 @@ class _MovieViewState extends State<MovieView> {
     return Scaffold(
       backgroundColor: Colors.black,
       body: SingleChildScrollView(
-
         child: SafeArea(
           child: FutureBuilder(
               future: ApiServices().getMovieDetails(widget.movie.id),
@@ -119,15 +119,17 @@ class _MovieViewState extends State<MovieView> {
                             ),
                             const Text(
                               "Production Companies",
-                              style: TextStyle(color: Colors.white, fontSize: 18),
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 18),
                             ),
                             Divider(),
                             Column(
                               children: List.generate(
                                   movie.compaines!.length,
                                   (index) => Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 8),
-                                    child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 8),
+                                        child: Container(
                                           decoration: BoxDecoration(
                                               color: Colors.grey.shade900,
                                               borderRadius:
@@ -137,18 +139,89 @@ class _MovieViewState extends State<MovieView> {
                                                 width: 60,
                                                 height: 60,
                                                 fit: BoxFit.contain,
-
-                                                image: NetworkImage(movie.compaines![index].logo == null ?
-                                            'https://img.freepik.com/premium-vector/company-icon-simple-element-illustration-company-concept-symbol-design-can-be-used-web-mobile_159242-7784.jpg':
-                                            "https://image.tmdb.org/t/p/w500${movie.compaines![index].logo!}")),
+                                                image: NetworkImage(movie
+                                                            .compaines![index]
+                                                            .logo ==
+                                                        null
+                                                    ? 'https://img.freepik.com/premium-vector/company-icon-simple-element-illustration-company-concept-symbol-design-can-be-used-web-mobile_159242-7784.jpg'
+                                                    : "https://image.tmdb.org/t/p/w500${movie.compaines![index].logo!}")),
                                             title: Text(
                                               movie.compaines![index].name,
-                                              style: TextStyle(color: Colors.grey,fontSize: 18),
+                                              style: TextStyle(
+                                                  color: Colors.grey,
+                                                  fontSize: 18),
                                             ),
                                           ),
                                         ),
-                                  )),
-                            )
+                                      )),
+                            ),
+                            const SizedBox(
+                              height: 8,
+                            ),
+                            const Text(
+                              "Cast",
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 18),
+                            ),
+                            Divider(),
+                            FutureBuilder(
+                                future: ApiServices().getCast(widget.movie.id),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return const Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  }
+                                  if (snapshot.hasError) {
+                                    return const Center(
+                                        child: Text(
+                                      "Something went wrong",
+                                      style: TextStyle(color: Colors.white),
+                                    ));
+                                  }
+                                  List<ActorModel> actors = snapshot.data!;
+                                  return Column(
+                                      children: List.generate(
+                                    actors.length,
+                                    (index) => Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 4),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                            color: Colors.grey.shade900,
+                                            borderRadius:
+                                                BorderRadius.circular(20)),
+                                        child: ListTile(
+                                          leading: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(100),
+                                              child: Image(
+                                                  width: 60,
+                                                  height: 60,
+                                                  fit: BoxFit.cover,
+                                                  image: NetworkImage(actors[
+                                                                  index]
+                                                              .image ==
+                                                          null
+                                                      ? 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwVMkUfmpVnYF-8L_MBr9UFyfVm597fp7YEA&s'
+                                                      : "https://image.tmdb.org/t/p/w500${actors[index].image}"))),
+                                          title: Text(
+                                            actors[index].name,
+                                            style:  TextStyle(
+                                                color: Colors.grey.shade200,
+                                                fontSize: 18),
+                                          ),
+                                          subtitle: actors[index].character != null ? Text(
+                                              actors[index].character!,
+                                              style: const TextStyle(
+                                                  color: Colors.grey,
+                                                  fontSize: 14) ):null,
+                                        ),
+                                      ),
+                                    ),
+                                  ));
+                                })
                           ],
                         ),
                       )
