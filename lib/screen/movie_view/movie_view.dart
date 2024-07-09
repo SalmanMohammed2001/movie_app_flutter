@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:movie_app/model/movie_model.dart';
+import 'package:movie_app/service/api_services.dart';
 
 class MovieView extends StatefulWidget {
   const MovieView({super.key, required this.movie});
@@ -55,6 +56,27 @@ class _MovieViewState extends State<MovieView> {
                       fontSize: 20,
                       fontWeight: FontWeight.bold),
                 ),
+                FutureBuilder(future: 
+                    ApiServices().getMovieDetails(widget.movie.id),
+                  builder: (context, snapshot) {
+                  if(snapshot.connectionState ==ConnectionState.waiting){
+                    return CircularProgressIndicator();
+                  }
+
+                  if(snapshot.hasData){
+                    MovieModel? movie=snapshot.data;
+
+                    return   movie!.tagline! != null ? Text(
+                      movie.tagline!,
+                      style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold),
+                    ):SizedBox();
+                  }
+                  return SizedBox();
+
+                    },),
                 const SizedBox(
                   height: 10,
                 ),
@@ -81,6 +103,7 @@ class _MovieViewState extends State<MovieView> {
                     )
                   ],
                 )
+
               ],
             ),
           )

@@ -73,18 +73,17 @@ class ApiServices {
   }
 
 
-  Future<List<MovieModel>> getMovieDats() async {
-    final response = await http.get(Uri.parse('$upComingMovies$apiKey'));
+  Future<MovieModel?> getMovieDetails(int id) async {
+    final response = await http.get(Uri.parse('$movieData$id?$apiKey'));
     if (response.statusCode == 200) {
       Map<String, dynamic> body = jsonDecode(response.body);
-      List<dynamic> results = body['results'];
-      List<MovieModel> movies = results
-          .map((e) => MovieModel.fromJson(e as Map<String, dynamic>))
-          .toList();
-      return movies;
+
+      MovieModel movie = MovieModel.fromJson(body);
+    Logger().f(body['tagline']);
+      return movie;
     } else {
       Logger().e('Error -${response.statusCode}');
-      return [];
+      return null;
     }
   }
 
