@@ -77,9 +77,8 @@ class ApiServices {
     final response = await http.get(Uri.parse('$movieData$id?$apiKey'));
     if (response.statusCode == 200) {
       Map<String, dynamic> body = jsonDecode(response.body);
-
       MovieModel movie = MovieModel.fromJson(body);
-    Logger().f(body['tagline']);
+
       return movie;
     } else {
       Logger().e('Error -${response.statusCode}');

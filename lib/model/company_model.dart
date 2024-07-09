@@ -6,7 +6,8 @@ class CompanyModel{
   CompanyModel({
     required this.id,
     required this.name,
-    this.logo});
+    this.logo
+  });
 
   factory CompanyModel.fromJson(Map<String, dynamic> json) {
     return CompanyModel(
@@ -15,6 +16,5 @@ class CompanyModel{
         logo: json['logo_path']
     );
   }
-
 
 }
